@@ -1,0 +1,74 @@
+@import 'tailwindcss';
+@import './theme.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-heading: 'Fredoka', 'Lalezar', ui-sans-serif, system-ui, sans-serif;
+
+    /* Map CSS variables into Tailwind utilities: bg-brand, text-brand, border-border, etc. */
+    --color-brand: var(--color-brand);
+    --color-brand-dark: var(--color-brand-dark);
+    --color-brand-light: var(--color-brand-light);
+    --color-accent-2: var(--color-accent-2);
+    --color-accent-2-dark: var(--color-accent-2-dark);
+    --color-accent-3: var(--color-accent-3);
+    --color-accent-3-dark: var(--color-accent-3-dark);
+
+    --color-surface: var(--color-surface);
+    --color-surface-alt: var(--color-surface-alt);
+    --color-surface-raised: var(--color-surface-raised);
+    --color-border: var(--color-border);
+
+    --color-text: var(--color-text);
+    --color-text-muted: var(--color-text-muted);
+    --color-text-inverse: var(--color-text-inverse);
+
+    --color-danger: var(--color-danger);
+    --color-success: var(--color-success);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 999px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='date'],
+input[type='file'],
+select,
+textarea {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
+}
