@@ -8,15 +8,31 @@
     <link rel="icon" href="{{ asset('images/brand/nafas-logo.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-surface-alt text-text" x-data>
+<body class="font-sans antialiased bg-surface-alt text-text" x-data="{ nav: false }" :class="nav && 'overflow-hidden'">
     <div class="flex min-h-screen">
-        <aside class="w-64 shrink-0 bg-surface-raised border-s border-border hidden lg:flex flex-col">
-            <div class="px-6 py-5 border-b border-border flex items-center gap-3">
+        {{-- overlay for the mobile drawer --}}
+        <div
+            x-show="nav"
+            x-transition.opacity
+            @click="nav = false"
+            class="fixed inset-0 z-30 bg-black/50 lg:hidden"
+            x-cloak
+        ></div>
+
+        <aside
+            class="fixed inset-y-0 start-0 z-40 w-72 max-w-[85vw] transition-transform duration-300 lg:static lg:z-auto lg:w-64 lg:max-w-none lg:translate-x-0 shrink-0 bg-surface-raised border-s border-border flex flex-col overflow-y-auto"
+            :class="nav ? 'translate-x-0' : 'translate-x-full'"
+            @keydown.escape.window="nav = false"
+        >
+            <div class="px-5 sm:px-6 py-5 border-b border-border flex items-center gap-3">
                 <img src="{{ asset('images/brand/nafas-logo.png') }}" alt="نفس" class="w-10 h-10 object-contain">
-                <div>
+                <div class="flex-1 min-w-0">
                     <p class="font-bold text-lg">نفس</p>
                     <p class="text-xs text-text-muted">إدارة القائمة</p>
                 </div>
+                <button type="button" @click="nav = false" class="lg:hidden -m-2 p-2 text-text-muted" aria-label="إغلاق القائمة">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
             <nav class="flex-1 px-3 py-4 space-y-1">
                 @php
@@ -31,8 +47,9 @@
                 @foreach($links as $link)
                 <a
                     href="{{ route($link['route']) }}"
+                    @click="nav = false"
                     @class([
-                        'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
+                        'flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-colors',
                         'bg-brand text-white' => request()->routeIs(str_replace('.index', '', $link['route']) . '*'),
                         'text-text-muted hover:bg-surface-alt' => !request()->routeIs(str_replace('.index', '', $link['route']) . '*'),
                     ])
@@ -58,15 +75,18 @@
         </aside>
 
         <div class="flex-1 min-w-0">
-            <header class="lg:hidden bg-surface-raised border-b border-border px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <img src="{{ asset('images/brand/nafas-logo.png') }}" alt="نفس" class="w-7 h-7 object-contain">
-                    <p class="font-bold">إدارة نفس</p>
+            <header class="lg:hidden sticky top-0 z-20 bg-surface-raised border-b border-border px-4 py-3 flex items-center gap-3">
+                <button type="button" @click="nav = true" class="-m-2 p-2 text-text" aria-label="فتح القائمة">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <img src="{{ asset('images/brand/nafas-logo.png') }}" alt="نفس" class="w-7 h-7 object-contain shrink-0">
+                    <p class="font-bold truncate">{{ $title }}</p>
                 </div>
-                <a href="{{ route('menu') }}" target="_blank" class="text-sm text-brand">عرض القائمة</a>
+                <a href="{{ route('menu') }}" target="_blank" class="text-sm text-brand shrink-0">عرض القائمة</a>
             </header>
 
-            <main class="p-6 max-w-6xl mx-auto">
+            <main class="p-4 sm:p-6 max-w-6xl mx-auto">
                 @if(session('status'))
                 <div class="mb-6 bg-brand/10 text-brand border border-brand/20 rounded-xl px-4 py-3 text-sm font-medium">
                     {{ session('status') }}

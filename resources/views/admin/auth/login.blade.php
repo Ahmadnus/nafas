@@ -7,7 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans antialiased bg-surface-alt text-text min-h-screen flex items-center justify-center px-4">
-    <div class="w-full max-w-sm bg-surface-raised border border-border rounded-3xl shadow-card p-8">
+    <div class="w-full max-w-sm bg-surface-raised border border-border rounded-3xl shadow-card p-6 sm:p-8">
         <div class="text-center mb-6">
             <div class="w-12 h-12 rounded-2xl bg-brand/10 text-brand flex items-center justify-center mx-auto mb-3">
                 <i data-lucide="lock" class="w-5 h-5"></i>

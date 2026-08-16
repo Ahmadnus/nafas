@@ -1,15 +1,15 @@
 <x-layouts.admin title="المنتجات">
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold">المنتجات</h1>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-5 sm:mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold">المنتجات</h1>
         <a href="{{ route('admin.products.create') }}" class="bg-brand hover:bg-brand-dark text-white text-sm font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2">
             <i data-lucide="plus" class="w-4 h-4"></i> منتج جديد
         </a>
     </div>
 
-    <form method="GET" class="flex gap-3 mb-4">
+    <form method="GET" class="grid grid-cols-2 sm:flex gap-3 mb-4">
         <input type="text" name="q" value="{{ request('q') }}" placeholder="ابحث عن منتج..."
-            class="flex-1 rounded-xl border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40">
-        <select name="category" class="rounded-xl border border-border px-4 py-2.5 text-sm">
+            class="col-span-2 sm:flex-1 w-full rounded-xl border border-border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40">
+        <select name="category" class="w-full sm:w-auto rounded-xl border border-border px-4 py-2.5 text-sm">
             <option value="">كل الأقسام</option>
             @foreach($categories as $category)
             <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name_ar ?: $category->name }}</option>
@@ -19,7 +19,8 @@
     </form>
 
     <div class="bg-surface-raised border border-border rounded-2xl overflow-hidden">
-        <table class="w-full text-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm min-w-[640px]">
             <thead class="bg-surface-alt text-text-muted text-xs uppercase">
                 <tr>
                     <th class="text-start px-5 py-3">المنتج</th>
@@ -34,7 +35,7 @@
                 <tr class="border-t border-border">
                     <td class="px-5 py-3">
                         <div class="flex items-center gap-3">
-                            <img src="{{ $product->image_url }}" class="w-10 h-10 rounded-lg object-cover bg-surface-alt">
+                            <img src="{{ $product->image_url }}" class="w-10 h-10 rounded-lg object-cover bg-surface-alt shrink-0">
                             <span class="font-medium">{{ $product->title_ar ?: $product->title }}</span>
                         </div>
                     </td>
@@ -66,7 +67,8 @@
                 @endforelse
             </tbody>
         </table>
+      </div>
     </div>
 
-    <div class="mt-4">{{ $products->links() }}</div>
+    <div class="mt-4 overflow-x-auto">{{ $products->links() }}</div>
 </x-layouts.admin>

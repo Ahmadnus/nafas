@@ -1,11 +1,11 @@
 <x-layouts.admin title="{{ $offer->exists ? 'تعديل العرض' : 'عرض جديد' }}">
-    <h1 class="text-2xl font-bold mb-6">{{ $offer->exists ? 'تعديل العرض' : 'عرض جديد' }}</h1>
+    <h1 class="text-xl sm:text-2xl font-bold mb-5 sm:mb-6">{{ $offer->exists ? 'تعديل العرض' : 'عرض جديد' }}</h1>
 
     <form
         method="POST"
         action="{{ $offer->exists ? route('admin.offers.update', $offer) : route('admin.offers.store') }}"
         enctype="multipart/form-data"
-        class="bg-surface-raised border border-border rounded-2xl p-6 max-w-xl space-y-5"
+        class="bg-surface-raised border border-border rounded-2xl p-4 sm:p-6 max-w-xl space-y-5"
     >
         @csrf
         @if($offer->exists) @method('PUT') @endif
@@ -83,8 +83,8 @@
         </label>
 
         <div class="flex items-center gap-3 pt-2">
-            <button class="bg-brand hover:bg-brand-dark text-white font-semibold px-5 py-2.5 rounded-xl">حفظ</button>
-            <a href="{{ route('admin.offers.index') }}" class="text-text-muted text-sm">إلغاء</a>
+            <button class="flex-1 sm:flex-none bg-brand hover:bg-brand-dark text-white font-semibold px-5 py-3 sm:py-2.5 rounded-xl">حفظ</button>
+            <a href="{{ route('admin.offers.index') }}" class="text-text-muted text-sm px-3 py-3">إلغاء</a>
         </div>
     </form>
 </x-layouts.admin>

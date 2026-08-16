@@ -1,7 +1,7 @@
 <x-layouts.admin title="الإعدادات">
-    <h1 class="text-2xl font-bold mb-6">الإعدادات</h1>
+    <h1 class="text-xl sm:text-2xl font-bold mb-5 sm:mb-6">الإعدادات</h1>
 
-    <form method="POST" action="{{ route('admin.settings.update') }}" class="bg-surface-raised border border-border rounded-2xl p-6 max-w-xl space-y-5">
+    <form method="POST" action="{{ route('admin.settings.update') }}" class="bg-surface-raised border border-border rounded-2xl p-4 sm:p-6 max-w-xl space-y-5">
         @csrf
         @method('PUT')
 
@@ -86,7 +86,7 @@
         </div>
 
         <div class="flex items-center gap-3 pt-2">
-            <button class="bg-brand hover:bg-brand-dark text-white font-semibold px-5 py-2.5 rounded-xl">حفظ الإعدادات</button>
+            <button class="w-full sm:w-auto bg-brand hover:bg-brand-dark text-white font-semibold px-5 py-3 sm:py-2.5 rounded-xl">حفظ الإعدادات</button>
         </div>
     </form>
 </x-layouts.admin>

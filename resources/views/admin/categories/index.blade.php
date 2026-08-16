@@ -1,13 +1,14 @@
 <x-layouts.admin title="الأقسام">
-    <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold">الأقسام</h1>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-5 sm:mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold">الأقسام</h1>
         <a href="{{ route('admin.categories.create') }}" class="bg-brand hover:bg-brand-dark text-white text-sm font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2">
             <i data-lucide="plus" class="w-4 h-4"></i> قسم جديد
         </a>
     </div>
 
     <div class="bg-surface-raised border border-border rounded-2xl overflow-hidden">
-        <table class="w-full text-sm">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm min-w-[560px]">
             <thead class="bg-surface-alt text-text-muted text-xs uppercase">
                 <tr>
                     <th class="text-start px-5 py-3">الاسم</th>
@@ -52,5 +53,6 @@
                 @endforelse
             </tbody>
         </table>
+      </div>
     </div>
 </x-layouts.admin>
