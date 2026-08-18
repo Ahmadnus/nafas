@@ -72,3 +72,53 @@ textarea {
     background-color: var(--color-surface-alt);
     color: var(--color-text);
 }
+
+/* ---------------------------------------------------------------------------
+   Product-card reveal safety net.
+
+   GSAP owns the reveal animation, but the card must never depend on GSAP to
+   become visible. Baseline is fully visible; only a page that actually booted
+   the reveal script (js-reveal is set by initCardReveals) is allowed to start
+   cards hidden. If the bundle fails, ScrollTrigger never fires, or the user
+   asks for reduced motion, every card renders at opacity 1.
+--------------------------------------------------------------------------- */
+.product-card {
+    opacity: 1;
+    visibility: visible;
+    backface-visibility: hidden;
+}
+
+/* Only promote to a layer while a card is mid-reveal, so a long menu does not
+   pin dozens of compositor layers on low-end phones. */
+.product-card[style*='opacity'] {
+    will-change: opacity, transform;
+}
+
+/* GSAP writes inline opacity/transform; make sure nothing in the cascade can
+   out-specify the finished state once clearProps has run. */
+.product-card[style*='opacity: 0'] {
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* Beat any inline opacity/transform GSAP may have written before the
+       preference was read. */
+    .product-card,
+    .product-grid > * {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+        transition: none !important;
+        animation: none !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* No-JS: the reveal script never runs, so nothing may be hidden. */
+.no-js .product-card {
+    opacity: 1 !important;
+    transform: none !important;
+}

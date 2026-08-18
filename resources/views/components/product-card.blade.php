@@ -1,7 +1,7 @@
 @props(['product', 'currency', 'isPopular' => false])
 
 <div
-    class="product-card group bg-surface-raised border border-border rounded-xl sm:rounded-2xl overflow-hidden shadow-card hover:shadow-float hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+    class="product-card group bg-surface-raised border border-border rounded-xl sm:rounded-2xl overflow-hidden shadow-card hover:shadow-float hover:-translate-y-1 transition-[box-shadow,transform] duration-300 cursor-pointer"
     @click="window.trackProductClick({{ $product->id }}); $store.modal.show(@js($product))"
 >
     <div class="relative aspect-[4/3] overflow-hidden bg-surface-alt">

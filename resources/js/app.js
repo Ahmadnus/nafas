@@ -5,7 +5,7 @@ import { createIcons, icons } from 'lucide';
 import cartStore from './cart';
 import productModal from './product-modal';
 import langStore from './lang';
-import { heroEntrance, staggerIn, observeStagger, cartBadgePulse, flyToCart, floatingBackground } from './animations';
+import { heroEntrance, staggerIn, revealCards, initCardReveals, cartBadgePulse, flyToCart, floatingBackground } from './animations';
 
 Alpine.plugin(intersect);
 Alpine.store('cart', cartStore());
@@ -17,7 +17,7 @@ document.documentElement.setAttribute('lang', Alpine.store('lang').current);
 
 window.Alpine = Alpine;
 window.gsap = gsap;
-window.gsapAnimations = { heroEntrance, staggerIn, observeStagger, cartBadgePulse, flyToCart, floatingBackground };
+window.gsapAnimations = { heroEntrance, staggerIn, revealCards, initCardReveals, cartBadgePulse, flyToCart, floatingBackground };
 
 window.trackProductClick = function (productId) {
     const token = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -51,6 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.querySelector('[data-floating-bg]')) {
         floatingBackground();
     }
+
+    // Scroll-reveal for every category grid (replaces the per-grid x-intersect).
+    initCardReveals();
 });
 document.addEventListener('icons:refresh', renderIcons);
 

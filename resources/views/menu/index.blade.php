@@ -176,7 +176,7 @@
                 @else
                 <div
                     class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 product-grid"
-                    x-intersect.once="window.gsapAnimations.staggerIn('#cat-{{ $category->id }} .product-card')"
+                    data-reveal-grid
                 >
                     @foreach($category->products as $product)
                     <x-product-card :product="$product" :currency="$settings['currency_symbol']" :is-popular="$popularProductIds->contains($product->id)" />

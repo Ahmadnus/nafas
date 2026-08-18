@@ -1,4 +1,11 @@
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+/** Respect the user's OS-level reduced-motion preference. */
+export const prefersReducedMotion = () =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function heroEntrance() {
     const logo = document.querySelector('[data-hero-logo]');
@@ -44,36 +51,99 @@ export function pulseLogo(el) {
 }
 
 export function staggerIn(selector, opts = {}) {
-    const els = document.querySelectorAll(selector);
+    const els = gsap.utils.toArray(selector);
     if (!els.length) return;
 
-    gsap.from(els, {
-        y: 24,
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.06,
-        ease: 'power2.out',
-        ...opts,
-    });
+    // Never leave a card stranded in the "from" state: fromTo declares an
+    // explicit end value, overwrite kills any older tween still holding
+    // opacity:0, and clearProps hands transform/opacity back to CSS so the
+    // Tailwind hover lift keeps working afterwards.
+    gsap.fromTo(
+        els,
+        { y: 24, opacity: 0 },
+        {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            stagger: 0.06,
+            ease: 'power2.out',
+            overwrite: 'auto',
+            clearProps: 'opacity,transform,visibility',
+            ...opts,
+        }
+    );
 }
 
-export function observeStagger(containerSelector, itemSelector, opts = {}) {
-    const containers = document.querySelectorAll(containerSelector);
+/**
+ * Reveal every [data-reveal] card in a container as it scrolls into view.
+ *
+ * ScrollTrigger.batch gives each card its own trigger (instead of one tween
+ * for the whole grid), so tall categories can no longer strand their
+ * off-screen cards at opacity 0 when a single grid-level tween is interrupted.
+ */
+export function revealCards(container, itemSelector = '.product-card') {
+    const root = typeof container === 'string' ? document.querySelector(container) : container;
+    if (!root || root.dataset.revealReady) return;
+    root.dataset.revealReady = '1';
 
-    containers.forEach((container) => {
-        const io = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        staggerIn(itemSelector === containerSelector ? itemSelector : `${containerSelector} ${itemSelector}`, opts);
-                        io.unobserve(entry.target);
-                    }
-                });
-            },
-            { threshold: 0.1 }
-        );
-        io.observe(container);
+    const items = gsap.utils.toArray(root.querySelectorAll(itemSelector));
+    if (!items.length) return;
+
+    if (prefersReducedMotion()) {
+        gsap.set(items, { clearProps: 'all', opacity: 1, y: 0 });
+        return;
+    }
+
+    gsap.set(items, { opacity: 0, y: 24 });
+
+    ScrollTrigger.batch(items, {
+        start: 'top 92%',
+        once: true,
+        batchMax: 6,
+        onEnter: (batch) =>
+            gsap.to(batch, {
+                opacity: 1,
+                y: 0,
+                duration: 0.5,
+                stagger: 0.06,
+                ease: 'power2.out',
+                overwrite: 'auto',
+                clearProps: 'opacity,transform,visibility',
+            }),
     });
+
+    // Anything already above the fold when the batch was built must not wait
+    // for a scroll event that may never come (short pages, deep links, reload
+    // at an offset).
+    ScrollTrigger.refresh();
+}
+
+/**
+ * Wire every category grid on the page and keep ScrollTrigger's cached
+ * positions honest as lazy images, fonts and Alpine renders shift the layout.
+ */
+export function initCardReveals(containerSelector = '[data-reveal-grid]') {
+    document.querySelectorAll(containerSelector).forEach((grid) => revealCards(grid));
+
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener('load', refresh);
+    document.addEventListener('lang:changed', refresh);
+    document.fonts?.ready.then(refresh);
+
+    // Lazy-loaded product images change grid height after ScrollTrigger has
+    // already measured it -> stale start/end positions -> cards that never fire.
+    document.querySelectorAll(`${containerSelector} img`).forEach((img) => {
+        if (!img.complete) img.addEventListener('load', refresh, { once: true });
+    });
+
+    // Safety net: if a trigger somehow never fires, nothing stays invisible.
+    setTimeout(() => {
+        document.querySelectorAll(`${containerSelector} .product-card`).forEach((card) => {
+            if (parseFloat(getComputedStyle(card).opacity) < 0.9) {
+                gsap.set(card, { clearProps: 'all', opacity: 1, y: 0 });
+            }
+        });
+    }, 4000);
 }
 
 export function popIn(el) {
