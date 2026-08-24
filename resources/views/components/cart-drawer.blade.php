@@ -22,7 +22,7 @@
         x-transition:leave-start="translate-x-0"
         x-transition:leave-end="translate-x-full"
         class="absolute right-0 top-0 h-full w-full sm:w-[420px] bg-surface-raised shadow-float flex flex-col"
-        x-init="$watch('$store.cart.open', v => v && $nextTick(() => document.dispatchEvent(new Event('icons:refresh'))))"
+        x-init="$watch('$store.cart.open', v => { if (v) { $nextTick(() => document.dispatchEvent(new Event('icons:refresh'))); } else { $store.cart.checkout = false; } })"
     >
         <div class="flex items-center justify-between px-5 py-4 border-b border-border">
             <h3 class="font-bold text-lg text-text" x-text="$store.lang.t('your_order')"></h3>
@@ -87,12 +87,71 @@
             </div>
 
             <button
-                @click="$store.cart.sendViaWhatsApp()"
+                @click="$store.cart.startCheckout()"
                 class="w-full bg-[#25D366] hover:brightness-95 text-white font-semibold py-3.5 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all duration-150 shadow-card"
             >
                 <i data-lucide="message-circle" class="w-5 h-5"></i>
                 <span x-text="$store.lang.t('send_whatsapp')"></span>
             </button>
+        </div>
+
+        <div
+            x-show="$store.cart.checkout && $store.cart.items.length > 0"
+            x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="absolute inset-0 bg-surface-raised flex flex-col"
+            x-init="$watch('$store.cart.checkout', v => v && $nextTick(() => document.dispatchEvent(new Event('icons:refresh'))))"
+        >
+            <div class="flex items-center justify-between px-5 py-4 border-b border-border">
+                <h3 class="font-bold text-lg text-text" x-text="$store.lang.t('customer_details')"></h3>
+                <button @click="$store.cart.cancelCheckout()" class="w-9 h-9 rounded-full hover:bg-surface-alt flex items-center justify-center active:scale-90 transition-all">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+                <p class="text-sm text-text-muted" x-text="$store.lang.t('customer_details_hint')"></p>
+
+                <input
+                    type="text"
+                    x-model="$store.cart.customerName"
+                    :placeholder="$store.lang.t('customer_name_placeholder')"
+                    class="w-full text-sm rounded-xl border border-border bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand/40"
+                />
+
+                <textarea
+                    x-model="$store.cart.customerAddress"
+                    rows="2"
+                    :placeholder="$store.lang.t('customer_address_placeholder')"
+                    class="w-full text-sm rounded-xl border border-border bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand/40 resize-none"
+                ></textarea>
+            </div>
+
+            <div class="border-t border-border p-5 space-y-3">
+                <div class="flex items-center justify-between font-bold text-text">
+                    <span x-text="$store.lang.t('total')"></span>
+                    <span x-text="$store.lang.currency + $store.cart.subtotal.toFixed(0)"></span>
+                </div>
+
+                <button
+                    @click="$store.cart.confirmOrder()"
+                    class="w-full bg-[#25D366] hover:brightness-95 text-white font-semibold py-3.5 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all duration-150 shadow-card"
+                >
+                    <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    <span x-text="$store.lang.t('confirm_order')"></span>
+                </button>
+
+                <button
+                    @click="$store.cart.cancelCheckout()"
+                    class="w-full text-text-muted hover:text-text font-medium py-2 rounded-full transition-colors"
+                    x-text="$store.lang.t('back')"
+                ></button>
+            </div>
         </div>
     </div>
 </div>

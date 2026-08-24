@@ -29,6 +29,9 @@ export default function cartStore() {
         currency: window.APP_CURRENCY || 'Rs.',
         whatsappNumber: window.APP_WHATSAPP || '',
         note: '',
+        customerName: '',
+        customerAddress: '',
+        checkout: false,
 
         persist() {
             saveCart(this.items);
@@ -139,6 +142,12 @@ export default function cartStore() {
             lines.push(`*${t('new_order')} — ${appName || 'Nafas - Juice & Patisserie'}*`);
             lines.push('');
 
+            const name = this.customerName.trim();
+            const address = this.customerAddress.trim();
+            if (name) lines.push(`${t('customer_name_label')}: ${name}`);
+            if (address) lines.push(`${t('customer_address_label')}: ${address}`);
+            if (name || address) lines.push('');
+
             this.items.forEach((item, idx) => {
                 const title = lang.pick(item.titleAr, item.title);
                 const prefix = item.isOffer ? '🔥 ' : '';
@@ -163,6 +172,20 @@ export default function cartStore() {
             }
 
             return lines.join('\n');
+        },
+
+        startCheckout() {
+            if (!this.items.length) return;
+            this.checkout = true;
+        },
+
+        cancelCheckout() {
+            this.checkout = false;
+        },
+
+        confirmOrder() {
+            this.checkout = false;
+            this.sendViaWhatsApp();
         },
 
         sendViaWhatsApp() {
