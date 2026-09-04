@@ -32,6 +32,7 @@ export default function cartStore() {
         customerName: '',
         customerAddress: '',
         checkout: false,
+        nameError: false,
 
         persist() {
             saveCart(this.items);
@@ -144,9 +145,9 @@ export default function cartStore() {
 
             const name = this.customerName.trim();
             const address = this.customerAddress.trim();
-            if (name) lines.push(`${t('customer_name_label')}: ${name}`);
+            lines.push(`${t('customer_name_label')}: ${name}`);
             if (address) lines.push(`${t('customer_address_label')}: ${address}`);
-            if (name || address) lines.push('');
+            lines.push('');
 
             this.items.forEach((item, idx) => {
                 const title = lang.pick(item.titleAr, item.title);
@@ -177,6 +178,7 @@ export default function cartStore() {
         startCheckout() {
             if (!this.items.length) return;
             this.checkout = true;
+            this.nameError = false;
         },
 
         cancelCheckout() {
@@ -184,12 +186,17 @@ export default function cartStore() {
         },
 
         confirmOrder() {
+            if (!this.customerName.trim()) {
+                this.nameError = true;
+                return;
+            }
+            this.nameError = false;
             this.checkout = false;
             this.sendViaWhatsApp();
         },
 
         sendViaWhatsApp() {
-            if (!this.items.length) return;
+            if (!this.items.length || !this.customerName.trim()) return;
             const message = this.buildWhatsAppMessage();
             const url = `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(message)}`;
             window.open(url, '_blank');

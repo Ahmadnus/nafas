@@ -117,12 +117,18 @@
             <div class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
                 <p class="text-sm text-text-muted" x-text="$store.lang.t('customer_details_hint')"></p>
 
-                <input
-                    type="text"
-                    x-model="$store.cart.customerName"
-                    :placeholder="$store.lang.t('customer_name_placeholder')"
-                    class="w-full text-sm rounded-xl border border-border bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand/40"
-                />
+                <div>
+                    <input
+                        type="text"
+                        required
+                        x-model="$store.cart.customerName"
+                        @input="$store.cart.nameError = false"
+                        :placeholder="$store.lang.t('customer_name_placeholder')"
+                        :class="$store.cart.nameError ? 'border-red-500 focus:ring-red-500/40' : 'border-border focus:ring-brand/40'"
+                        class="w-full text-sm rounded-xl border bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2"
+                    />
+                    <p x-show="$store.cart.nameError" x-cloak class="mt-1 text-xs text-red-500" x-text="$store.lang.t('customer_name_required')"></p>
+                </div>
 
                 <textarea
                     x-model="$store.cart.customerAddress"
@@ -140,6 +146,8 @@
 
                 <button
                     @click="$store.cart.confirmOrder()"
+                    :disabled="!$store.cart.customerName.trim()"
+                    :class="!$store.cart.customerName.trim() ? 'opacity-50 cursor-not-allowed' : ''"
                     class="w-full bg-[#25D366] hover:brightness-95 text-white font-semibold py-3.5 rounded-full flex items-center justify-center gap-2 active:scale-95 transition-all duration-150 shadow-card"
                 >
                     <i data-lucide="message-circle" class="w-5 h-5"></i>
